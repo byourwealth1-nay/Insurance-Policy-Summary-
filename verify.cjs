@@ -4,3 +4,11 @@ const ctx={document:{getElementById:el,querySelectorAll:()=>[],addEventListener(
 vm.runInContext(`state.client={...state.client,income:1200000,expenses:600000,years:5,debt:1000000,assets:500000,dependent:500000,roomBudget:6000};$('calculate').onclick();`,ctx);
 assert.equal(vm.runInContext('state.targets.life',ctx),4000000);assert.equal(vm.runInContext('state.targets.severe',ctx),3600000);assert.equal(vm.runInContext('state.targets.daily',ctx),3288);
 vm.runInContext(`state.policies=[{status:'มีผลบังคับ',life:1000000},{status:'สิ้นผลบังคับ',life:9000000},{status:'มีผลบังคับ',life:7000000,end:'2000-01-01'},{status:'มีผลบังคับ',life:8000000,start:'2999-01-01'}].map(p=>Object.assign(Object.fromEntries(cats.map(([k])=>[k,0])),p));`,ctx);assert.equal(vm.runInContext('totals().life',ctx),1000000);assert.equal(vm.runInContext("num('1,234.50')",ctx),1234.5);assert.equal(vm.runInContext("esc('<img>')",ctx),'&lt;img&gt;');assert.throws(()=>vm.runInContext('validate({version:1})',ctx));console.log('PASS: targets, daily compensation, active/expired/future policies, number parsing, escaping, invalid import');
+vm.runInContext('state=validate(demoState());render()',ctx);
+assert.equal(vm.runInContext('state.policies.length',ctx),5);
+assert.equal(vm.runInContext('new Set(state.policies.map(p=>p.company)).size',ctx),3);
+assert.equal(vm.runInContext('totals().life',ctx),3700000);
+assert.equal(vm.runInContext('totals().severe',ctx),2000000);
+assert.equal(vm.runInContext('totals().room',ctx),4000);
+assert.equal(vm.runInContext('state.policies.reduce((s,p)=>s+p.premium,0)',ctx),105000);
+console.log('PASS: demo schema, 5 policies, 3 companies, coverage totals and annual premium');
